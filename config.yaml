@@ -1,0 +1,38 @@
+sources:
+  - name: google_trends_kr
+    type: rss
+    enabled: true
+    url: https://trends.google.com/trending/rss?geo=KR
+
+  - name: youtube_trending_kr
+    type: youtube
+    enabled: true
+    region_code: KR
+    max_results: 20
+
+  - name: theqoo
+    type: scrape
+    enabled: true
+    url: https://theqoo.net/hot
+    url_pattern: '^/hot/\d+'
+
+  - name: ruliweb
+    type: scrape
+    enabled: true
+    url: https://bbs.ruliweb.com/best
+    url_pattern: '/best/board/\d+/read/\d+'
+
+  - name: dcinside_hit
+    type: scrape
+    enabled: true
+    url: https://gall.dcinside.com/board/lists/?id=hit
+    url_pattern: '/board/view/\?id=\w+&no=\d+'
+
+  - name: namuwiki
+    type: namuwiki_sidebar
+    enabled: true
+    url: https://namu.wiki/sidebar.json
+
+summary:
+  max_topics: 10
+  llm_model: gemini-2.5-flash

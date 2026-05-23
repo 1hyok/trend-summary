@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>한국 트렌드</title>
+    <style>
+        :root {
+            --bg: #FAF7F2;
+            --text-primary: #1F1B16;
+            --text-body: #2C2823;
+            --text-secondary: #4A4239;
+            --text-muted: #6B655D;
+            --text-faint: #8A7F73;
+            --text-faintest: #A89E92;
+            --card-bg: #FFFFFF;
+            --card-shadow: 0 1px 3px rgba(60, 50, 35, 0.05);
+            --popup-shadow: 0 8px 24px rgba(60, 50, 35, 0.15);
+            --border: #E5DDD0;
+            --badge-bg: #F0E8D9;
+            --badge-text: #8A6F40;
+            --button-bg: #2C2823;
+            --button-text: #FAF7F2;
+            --button-shadow: 0 4px 14px rgba(44, 40, 35, 0.25);
+            --error-bg: #FBEEEA;
+            --error-text: #7A2418;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #18150F;
+                --text-primary: #F0E8DA;
+                --text-body: #E8DFCF;
+                --text-secondary: #C9BFAD;
+                --text-muted: #A8A092;
+                --text-faint: #807A6F;
+                --text-faintest: #6E6759;
+                --card-bg: #221E18;
+                --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                --popup-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                --border: #3A3328;
+                --badge-bg: #3A2F1F;
+                --badge-text: #D4B07A;
+                --button-bg: #F0E8DA;
+                --button-text: #1F1B16;
+                --button-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+                --error-bg: #3A1812;
+                --error-text: #F0B4A8;
+            }
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+            margin: 0 auto;
+            padding: 24px 18px 96px;
+            background: var(--bg);
+            color: var(--text-body);
+            max-width: 620px;
+            line-height: 1.5;
+        }
+        h1 {
+            font-family: ui-serif, "New York", Georgia, "Times New Roman", serif;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin: 8px 0 20px;
+            color: var(--text-primary);
+        }
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .filter-chip {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s;
+        }
+        .filter-chip.active {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border-color: var(--button-bg);
+        }
+        .loading {
+            text-align: center;
+            padding: 48px 16px;
+            color: var(--text-faint);
+            font-size: 14px;
+        }
+        .topic {
+            background: var(--card-bg);
+            padding: 20px 22px;
+            margin-bottom: 12px;
+            border-radius: 14px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .topic-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .topic-image {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--border);
+        }
+        .topic-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .category-badge {
+            font-size: 11px;
+            letter-spacing: 0.3px;
+            padding: 3px 9px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .topic-name {
+            font-family: ui-serif, "New York", Georgia, "Times New Roman", serif;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 1.3;
+            color: var(--text-primary);
+            margin: 0 0 8px;
+            letter-spacing: -0.3px;
+        }
+        .topic-description {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0 0 12px;
+        }
+        .related-items {
+            margin: 0 0 14px;
+            padding-left: 18px;
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+        .related-items li {
+            margin-bottom: 3px;
+        }
+        .related-items a {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+            transition: border-color 0.15s;
+        }
+        .related-items a:hover {
+            border-bottom-color: var(--text-muted);
+        }
+        .sources {
+            font-size: 11px;
+            color: var(--text-faintest);
+            letter-spacing: 0.3px;
+        }
+        .error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        .refresh-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: var(--button-shadow);
+            transition: transform 0.15s;
+        }
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+        .refresh-btn:disabled {
+            opacity: 0.4;
+            cursor: wait;
+        }
+        .preview-popup {
+            position: absolute;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            width: 280px;
+            box-shadow: var(--popup-shadow);
+            z-index: 1000;
+            pointer-events: none;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.12s;
+        }
+        .preview-popup.visible { opacity: 1; }
+        .preview-popup img {
+            width: 100%;
+            max-height: 160px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: block;
+            margin-bottom: 8px;
+            background: var(--border);
+        }
+        .preview-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .preview-desc {
+            color: var(--text-muted);
+            font-size: 11px;
+            line-height: 1.45;
+            max-height: 54px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>한국 트렌드</h1>
+    <div id="filters" class="filters" style="display:none;"></div>
+    <div id="content">
+        <div class="loading">수집 중... (15~40초)</div>
+    </div>
+    <button id="refresh" class="refresh-btn" title="새로고침">↻</button>
+
+    <script>
+        let allTopics = [];
+        let activeCategory = "전체";
+        let isLoading = false;
+
+        async function load() {
+            if (isLoading) return;
+            isLoading = true;
+            const btn = document.getElementById("refresh");
+            btn.disabled = true;
+            document.getElementById("filters").style.display = "none";
+            document.getElementById("content").innerHTML = '<div class="loading">수집 중... (15~40초)</div>';
+            try {
+                const res = await fetch("/api/trends");
+                if (!res.ok) throw new Error("API 오류 " + res.status);
+                const data = await res.json();
+                allTopics = data.topics || [];
+                renderFilters();
+                render();
+            } catch (e) {
+                document.getElementById("content").innerHTML =
+                    '<div class="error">로드 실패: ' + escapeHtml(e.message) + '</div>';
+            } finally {
+                isLoading = false;
+                btn.disabled = false;
+            }
+        }
+
+        function renderFilters() {
+            const categories = ["전체", ...new Set(allTopics.map(t => t.category))];
+            const filters = document.getElementById("filters");
+            filters.innerHTML = categories.map(c =>
+                `<div class="filter-chip${c === activeCategory ? " active" : ""}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</div>`
+            ).join("");
+            filters.style.display = "flex";
+            filters.querySelectorAll(".filter-chip").forEach(el => {
+                el.onclick = () => {
+                    activeCategory = el.dataset.cat;
+                    renderFilters();
+                    render();
+                };
+            });
+        }
+
+        function render() {
+            const filtered = activeCategory === "전체"
+                ? allTopics
+                : allTopics.filter(t => t.category === activeCategory);
+            const html = filtered.map(t => {
+                const related = (t.related_items || []);
+                const relatedHtml = related.length
+                    ? `<ul class="related-items">${related.map(r => {
+                        const url = safeUrl(r.url);
+                        const inner = escapeHtml(r.title);
+                        return url
+                            ? `<li><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${inner}</a></li>`
+                            : `<li>${inner}</li>`;
+                      }).join("")}</ul>`
+                    : "";
+                const img = safeUrl(t.image_url);
+                const imgHtml = img
+                    ? `<img class="topic-image" src="${escapeHtml(img)}" referrerpolicy="no-referrer" onerror="this.style.display='none'">`
+                    : "";
+                return `
+                <article class="topic">
+                    <div class="topic-body">
+                        <div class="topic-meta">
+                            <span class="category-badge">${escapeHtml(t.category)}</span>
+                        </div>
+                        <h2 class="topic-name">${escapeHtml(t.topic)}</h2>
+                        <div class="topic-description">${escapeHtml(t.description)}</div>
+                        ${relatedHtml}
+                        <div class="sources">${(t.sources || []).map(escapeHtml).join(" · ")}</div>
+                    </div>
+                    ${imgHtml}
+                </article>`;
+            }).join("");
+            document.getElementById("content").innerHTML =
+                html || '<div class="loading">표시할 토픽이 없습니다.</div>';
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, c =>
+                ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]
+            );
+        }
+        function safeUrl(u) {
+            if (!u || typeof u !== "string") return "";
+            return (u.startsWith("http://") || u.startsWith("https://")) ? u : "";
+        }
+
+        // ---- Link hover preview ----
+        const previewCache = {};
+        let hoverTimer = null;
+        let popup = null;
+
+        document.addEventListener("mouseover", e => {
+            const a = e.target.closest(".related-items a");
+            if (!a) return;
+            clearTimeout(hoverTimer);
+            hoverTimer = setTimeout(() => showPreview(a), 400);
+        });
+        document.addEventListener("mouseout", e => {
+            const a = e.target.closest(".related-items a");
+            if (!a) return;
+            clearTimeout(hoverTimer);
+            hidePreview();
+        });
+
+        async function showPreview(anchor) {
+            const url = anchor.href;
+            let data = previewCache[url];
+            if (data === undefined) {
+                try {
+                    const res = await fetch("/api/preview?url=" + encodeURIComponent(url));
+                    data = res.ok ? await res.json() : {};
+                } catch (e) {
+                    data = {};
+                }
+                previewCache[url] = data;
+            }
+            if (!data.image && !data.title && !data.description) return;
+
+            popup = document.createElement("div");
+            popup.className = "preview-popup";
+            const parts = [];
+            if (data.image) {
+                parts.push(`<img src="${escapeHtml(data.image)}" referrerpolicy="no-referrer" onerror="this.style.display='none'">`);
+            }
+            if (data.title) {
+                parts.push(`<div class="preview-title">${escapeHtml(data.title)}</div>`);
+            }
+            if (data.description) {
+                parts.push(`<div class="preview-desc">${escapeHtml(data.description)}</div>`);
+            }
+            popup.innerHTML = parts.join("");
+            document.body.appendChild(popup);
+
+            // Position below anchor, clamp to viewport
+            const rect = anchor.getBoundingClientRect();
+            const popupWidth = 280;
+            let left = rect.left + window.scrollX;
+            if (left + popupWidth > window.innerWidth - 10) {
+                left = window.innerWidth - popupWidth - 10;
+            }
+            popup.style.left = left + "px";
+            popup.style.top = (rect.bottom + window.scrollY + 6) + "px";
+            requestAnimationFrame(() => popup && popup.classList.add("visible"));
+        }
+        function hidePreview() {
+            if (popup) {
+                popup.remove();
+                popup = null;
+            }
+        }
+
+        document.getElementById("refresh").onclick = load;
+        load();
+    </script>
+</body>
+</html>
