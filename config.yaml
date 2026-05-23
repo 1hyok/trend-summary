@@ -34,5 +34,5 @@ sources:
     url: https://namu.wiki/sidebar.json
 
 summary:
-  max_topics: 10
+  max_topics: 20
   llm_model: gemini-2.5-flash
